@@ -1,0 +1,301 @@
+# This is the OpenAPI specification for your service. It is used to generate the client code.
+# To generate the server code, use the Gradle task `openApiGenerate`. The 
+# generated code will be placed in `build/generate-resources/main`.
+#
+# We will evaluate you based on how well you design your API.
+# 1. How well it follows REST principles.
+# 2. How easy it is to understand and use.
+#
+# References
+# 1. https://swagger.io/specification/
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: User Service
+  license:
+    name: MIT
+servers:
+  - url: http://localhost
+paths:
+  /hello:
+    get:
+      summary: This is just a test endpoint to get you started.
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Test return
+          content:
+            application/json:    
+              schema:
+                $ref: "#/components/schemas/HelloResponse"
+        '404':
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+
+  /estate:
+    post:
+      summary: Create a palm estate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateEstateRequestPayload'
+        required: true
+      responses:
+        '200':
+          description: Succesfully operation when create an estate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateValidResponse'
+        '400':
+          description: Missing required properties
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/MissingField'
+                - $ref: '#/components/schemas/WrongDatatype'
+                - $ref: '#/components/schemas/WrongMinValue'
+                
+  /estate/{estate_id}/tree:
+    post:
+      summary: Create a tree in specific estate by giving x, y coordinate and height of tree. Estate ID must be given in the endpoint path.
+      parameters:
+      - name: estate_id
+        in: path
+        description: ID of estate return when create an estate
+        required: true
+        schema:
+          type: string
+          format: string
+      requestBody:
+        content:
+          application/json:
+            schema: 
+              $ref: '#/components/schemas/CreateTreeRequestPayload'
+      responses:
+        '200':
+          description: Succesfully operation when create a tree in specific estate
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateValidResponse'
+        '404':
+          description: Estate id is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        '400':
+          description: Missing required properties / bad request
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/MissingField'
+                - $ref: '#/components/schemas/WrongDatatype'
+                - $ref: '#/components/schemas/WrongMinValue'
+                
+  /estate/{estate_id}/stats:
+    get:
+      summary: Get stats of of the tree in the estate. Returns count of tree, max, min & median height.
+      parameters:
+        - name: estate_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+      responses:
+        "200":
+          description: Returns count of tree, max, min & median.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetStatEstateResponse"
+        "404":
+          description: Estate id is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+        
+  /estate/{estate_id}/drone-plane:
+    get:
+      summary: Get total distance of drone monitoring travel in estate
+      parameters:
+        - name: estate_id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: string
+        - name: max-distance
+          in: query
+          description: the maximum sum of vertical and horizontal distance, in meters, that the drone can travel with its main battery. Will return response of rest coordinate
+          schema:
+            type: integer
+            format: integer
+      responses:
+        "200": 
+          description: Get total distance of drone monitoring travel in estate
+          content:
+            application/json:
+              schema:
+                 $ref: "#/components/schemas/GetDronePlanResponse"
+        "404":
+          description: Estate id is not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorNotFound'
+          
+      
+components:
+  schemas:
+    CreateEstateRequestPayload:
+      type: object
+      properties: 
+        width:
+          type: integer
+          format: int
+          example: 10
+          minimum: 1
+          maximum: 1000000
+        height:
+          type: integer
+          format: int
+          example: 10
+          minimum: 1
+          maximum: 1000000
+      required: 
+        - width
+        - height
+          
+    CreateValidResponse:
+      type: object
+      properties:
+        id: 
+          type: string
+          example: "275ce7d2-f3ba-4aec-8511-f4a0ea00869d"
+          
+    GetStatEstateResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          format: int
+          example: 20
+        min:
+          type: integer
+          format: int
+          example: 5
+        max:
+          type: integer
+          format: int
+          example: 30
+        median:
+          type: number
+          format: float
+          example: 20.5
+      required: 
+        - count
+        - min
+        - max
+        - median
+          
+    GetDronePlanResponse:
+      type: object
+      properties:
+        distance:
+          type: integer
+          format: int
+          example: 200
+        rest:
+          type: object
+          properties:
+            x: 
+              type: integer
+              format: integer
+              example: 20
+            y: 
+              type: integer
+              format: integer
+              example: 10
+      required: 
+        - distance
+          
+    MissingField:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "width properties is required"
+    WrongDatatype:
+      type: object
+      properties:
+        error:
+          type: string
+          example: "value must be integer"
+    WrongMinValue:
+      type: object
+      properties:
+        error:
+          type: string
+          example: value must be more than > 0 and < 1000000
+    CreateTreeRequestPayload:
+      type: object
+      properties:
+        x:
+          type: integer
+          format: int
+          example: 10
+          minimum: 1
+          maximum: 1000000
+        y:
+          type: integer
+          format: int
+          example: 10
+          minimum: 1
+          maximum: 1000000
+        height:
+          type: integer
+          format: int
+          example: 30
+          minimum: 1
+          maximum: 1000000
+      required: 
+        - x
+        - y
+        - height
+    
+    ErrorNotFound:
+      type: object
+      properties:
+        error:
+          type: string
+          example: estate is not found
+    HelloResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
+          example: Hello, World!
+    ErrorResponse:
+      type: object
+      required:
+        - message
+      properties:
+        message:
+          type: string
