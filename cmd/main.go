@@ -6,6 +6,7 @@ import (
 	"github.com/SawitProRecruitment/UserService/generated"
 	"github.com/SawitProRecruitment/UserService/handler"
 	"github.com/SawitProRecruitment/UserService/repository"
+	"github.com/SawitProRecruitment/UserService/service/drone"
 	"github.com/SawitProRecruitment/UserService/service/estate"
 	"github.com/SawitProRecruitment/UserService/service/tree"
 
@@ -28,6 +29,7 @@ func main() {
 
 func newServer() *handler.Server {
 	dbDsn := os.Getenv("DATABASE_URL")
+	os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/palm-estate?sslmode=disable")
 
 	db := repository.NewRepository(repository.NewRepositoryOptions{
 		Dsn: dbDsn,
@@ -41,6 +43,7 @@ func newServer() *handler.Server {
 		Validator:     handler.NewValidator(),
 		EstateService: estate.NewEstateService(estateRepo),
 		TreeService:   tree.NewTreeService(treeRepo, estateRepo),
+		DroneService:  drone.NewDroneService(drone.DroneOpts{}),
 	}
 
 	return handler.NewServer(opts)

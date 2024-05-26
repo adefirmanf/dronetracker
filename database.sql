@@ -6,6 +6,28 @@
 -- In this assignment we will use PostgreSQL as the database.
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
+-- https://wiki.postgresql.org/wiki/Aggregate_Median#median.28numeric.29
+CREATE OR REPLACE FUNCTION _final_median(numeric[])
+   RETURNS numeric AS
+$$
+   SELECT AVG(val)
+   FROM (
+     SELECT val
+     FROM unnest($1) val
+     ORDER BY 1
+     LIMIT  2 - MOD(array_upper($1, 1), 2)
+     OFFSET CEIL(array_upper($1, 1) / 2.0) - 1
+   ) sub;
+$$
+LANGUAGE 'sql' IMMUTABLE;
+
+CREATE AGGREGATE median(numeric) (
+  SFUNC=array_append,
+  STYPE=numeric[],
+  FINALFUNC=_final_median,
+  INITCOND='{}'
+);
+
 CREATE TABLE estate (
 	id uuid NOT NULL DEFAULT uuid_generate_v4(),
 	width int4 NOT NULL DEFAULT 0,

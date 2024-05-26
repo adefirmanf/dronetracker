@@ -22,7 +22,7 @@ func (r *Repository) tableName() string {
 }
 
 func (r *Repository) FindByID(ctx context.Context, id string) (*Estate, error) {
-	q := fmt.Sprintf("SELECT * FROM %s WHERE id = $1", r.tableName())
+	q := fmt.Sprintf("SELECT id, width, length, created_at, updated_at FROM %s WHERE id = $1", r.tableName())
 	estate := &Estate{}
 	err := r.dbHandler.Db.QueryRowContext(ctx, q, id).Scan(&estate.ID, &estate.Width, &estate.Length, &estate.CreatedAt, &estate.UpdatedAt)
 	if err != nil {

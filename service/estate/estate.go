@@ -11,6 +11,7 @@ type service struct {
 }
 
 type Service interface {
+	RetrieveEstate(ctx context.Context, id string) (*estate.Estate, error)
 	CreateNewEstate(ctx context.Context, width, length int) (string, error)
 }
 
@@ -18,6 +19,10 @@ func NewEstateService(r estate.RepositoryInterface) Service {
 	return &service{
 		estateRepository: r,
 	}
+}
+
+func (s *service) RetrieveEstate(ctx context.Context, id string) (*estate.Estate, error) {
+	return s.estateRepository.FindByID(ctx, id)
 }
 
 func (s *service) CreateNewEstate(ctx context.Context, width, length int) (string, error) {

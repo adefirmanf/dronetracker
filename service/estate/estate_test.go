@@ -1,12 +1,12 @@
 package estate
 
 import (
-	"log"
 	"math"
 	"testing"
 )
 
 func TestDroneTracker(t *testing.T) {
+	// TODO : Update Test cases
 	type estate struct {
 		width  int
 		length int
@@ -54,14 +54,12 @@ func TestDroneTracker(t *testing.T) {
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = currentPlotHeight + 1
 				}
-				log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 			} else { // If the current plot is not tree, we can safely to reduce the drone height to the ground level (0)
 				if droneHeight > 0 {
 					groundLevel := 0
 					travelDiff := math.Abs(float64(droneHeight - groundLevel))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = groundLevel
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			// This condition is to check if the next plot is tree but the drone is at the lowest level than the next plot/tree
@@ -71,7 +69,6 @@ func TestDroneTracker(t *testing.T) {
 					travelDiff := math.Abs(float64(droneHeight - (nextPlotHeight + 1)))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = nextPlotHeight + 1
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			x++
@@ -93,14 +90,12 @@ func TestDroneTracker(t *testing.T) {
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = currentPlotHeight + 1
 				}
-				log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 			} else { // If the current plot is not tree, we can safely to reduce the drone height to the ground level (0)
 				if droneHeight > 0 {
 					groundLevel := 0
 					travelDiff := math.Abs(float64(droneHeight - groundLevel))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = groundLevel
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			// This condition is to check if the next plot is tree but the drone is at the lowest level than the next plot/tree
@@ -110,7 +105,6 @@ func TestDroneTracker(t *testing.T) {
 					travelDiff := math.Abs(float64(droneHeight - (nextPlotHeight + 1)))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = nextPlotHeight + 1
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			x--
@@ -124,7 +118,6 @@ func TestDroneTracker(t *testing.T) {
 					travelDiff := math.Abs(float64(droneHeight - (nextPlotHeight + 1)))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = nextPlotHeight + 1
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			// log.Printf("{x: %d, y: %d, height: %d, total_distance: %d}", x, y, 0, droneTotalDistance)
@@ -139,7 +132,6 @@ func TestDroneTracker(t *testing.T) {
 					travelDiff := math.Abs(float64(droneHeight - (nextPlotHeight + 1)))
 					travelVerticalDistance += int(travelDiff)
 					droneHeight = nextPlotHeight + 1
-					log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", x, y, droneHeight, travelVerticalDistance)
 				}
 			}
 			// log.Printf("{x: %d, y: %d, height: %d, total_distance: %d}", x, y, 0, droneTotalDistance)

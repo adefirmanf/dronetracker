@@ -123,7 +123,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/ErrorNotFound'
         
-  /estate/{estate_id}/drone-plane:
+  /estate/{estate_id}/drone-plan:
     get:
       summary: Get total distance of drone monitoring travel in estate
       parameters:

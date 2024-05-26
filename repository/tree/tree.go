@@ -41,7 +41,7 @@ func (r *Repository) IsExistInEstate(ctx context.Context, estateId string, xCoor
 }
 
 func (r *Repository) FindByEstateID(ctx context.Context, estateId string) ([]*Tree, error) {
-	q := fmt.Sprintf("SELECT * FROM %s WHERE estate_id = $1", r.tableName())
+	q := fmt.Sprintf("SELECT id, estate_id, x_coordinate, y_coordinate, height, created_at, updated_at FROM %s WHERE estate_id = $1", r.tableName())
 	rows, err := r.dbHandler.Db.QueryContext(ctx, q, estateId)
 	if err != nil {
 		return nil, err
@@ -58,4 +58,16 @@ func (r *Repository) FindByEstateID(ctx context.Context, estateId string) ([]*Tr
 	}
 
 	return trees, nil
+}
+
+func (r *Repository) GetStats(ctx context.Context, estateID string) (*TreeStats, error) {
+	q := fmt.Sprintf("SELECT median(height), count(id), min(height), max(height) FROM %s WHERE estate_id = $1", r.tableName())
+	row := r.dbHandler.Db.QueryRowContext(ctx, q, estateID)
+
+	var stats TreeStats
+	if err := row.Scan(&stats.Median, &stats.Count, &stats.Min, &stats.Max); err != nil {
+		return nil, err
+	}
+	return &stats, nil
+
 }

@@ -106,10 +106,58 @@ func (s *Server) PostEstateEstateIdTree(ctx echo.Context, estateId string) error
 	return ctx.JSON(http.StatusOK, resp)
 }
 
-func (s *Server) GetEstateEstateIdDronePlane(echo.Context, string, generated.GetEstateEstateIdDronePlaneParams) error {
-	return nil
+func (s *Server) GetEstateEstateIdDronePlan(ctx echo.Context, estateID string, params generated.GetEstateEstateIdDronePlanParams) error {
+	type Path struct {
+		EstateID string `validate:"uuid"`
+	}
+
+	if err := s.Validator.Validate(&Path{EstateID: estateID}); err != nil {
+		var badRequestResp generated.BadRequest
+		badRequestResp.Error = err.Error()
+
+		return ctx.JSON(http.StatusBadRequest, badRequestResp)
+	}
+
+	// TODO: Return as Internal server error
+	estate, err := s.EstateService.RetrieveEstate(ctx.Request().Context(), estateID)
+	if err != nil {
+		log.Println("Error here estate", err)
+		return err
+	}
+
+	trees, err := s.TreeService.RetrievesByEstateID(ctx.Request().Context(), estateID)
+	if err != nil {
+		log.Println("Error here tree", err)
+		return err
+	}
+	var resp generated.GetDronePlanResponse
+	stats := s.DroneService.GetDronePlane(estate, trees)
+
+	resp.Distance = stats
+	return ctx.JSON(http.StatusOK, resp)
 }
 
 func (s *Server) GetEstateEstateIdStats(ctx echo.Context, estateId string) error {
-	return nil
+	type Path struct {
+		EstateID string `validate:"uuid"`
+	}
+
+	if err := s.Validator.Validate(&Path{EstateID: estateId}); err != nil {
+		var badRequestResp generated.BadRequest
+		badRequestResp.Error = err.Error()
+
+		return ctx.JSON(http.StatusBadRequest, badRequestResp)
+	}
+
+	var resp generated.GetStatEstateResponse
+	if stats, err := s.TreeService.GetStats(ctx.Request().Context(), estateId); err != nil {
+		return ctx.JSON(http.StatusOK, resp)
+	} else {
+		resp.Count = stats.Count
+		resp.Max = stats.Max
+		resp.Min = stats.Min
+		resp.Median = stats.Median
+	}
+	return ctx.JSON(http.StatusOK, resp)
+
 }

@@ -1,7 +1,6 @@
 package drone
 
 import (
-	"fmt"
 	"log"
 	"math"
 )
@@ -96,7 +95,6 @@ func (d *droneMovements) updateDroneBeforeToNextPlot(nextTreeHeight int) {
 func (d *droneMovements) startTrack() {
 	esOpts := d.estateOpts
 	stats := d
-	fmt.Println(d.treesLocation)
 	for i := 1; i < esOpts.length*esOpts.width; i++ {
 		// Start from east to west (Drone position |> )
 		if stats.currentDirection == "east" {
@@ -111,7 +109,7 @@ func (d *droneMovements) startTrack() {
 			if nextTreeHeight, ok := stats.treesLocation[coordinate{x: stats.x + 1, y: stats.y}]; ok {
 				d.updateDroneBeforeToNextPlot(nextTreeHeight)
 			}
-			log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", stats.x, stats.y, stats.heightDrone, stats.totalVerticalMovements)
+			stats.totalHorizontalMovements += 10
 			stats.x++
 		}
 
@@ -126,8 +124,8 @@ func (d *droneMovements) startTrack() {
 			if nextTreeHeight, ok := stats.treesLocation[coordinate{x: stats.x - 1, y: stats.y}]; ok {
 				d.updateDroneBeforeToNextPlot(nextTreeHeight)
 			}
-			log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", stats.x, stats.y, stats.heightDrone, stats.totalVerticalMovements)
-			stats.x++
+			stats.totalHorizontalMovements += 10
+			stats.x--
 		}
 
 		// If drone already reached the east or west side, change the direction to north
@@ -137,7 +135,6 @@ func (d *droneMovements) startTrack() {
 			if nextTreeHeight, ok := stats.treesLocation[coordinate{x: stats.x, y: stats.y + 1}]; ok {
 				d.updateDroneBeforeToNextPlot(nextTreeHeight)
 			}
-			log.Printf("|> (x: %d, y: %d) Drone height: %d travelVerticalDistace: %d", stats.x, stats.y, stats.heightDrone, stats.totalVerticalMovements)
 			continue
 		}
 
@@ -145,6 +142,8 @@ func (d *droneMovements) startTrack() {
 		if stats.currentDirection == "north" {
 			// Then need to move the drone to the next column (move: 1 step only)
 			stats.y++
+			stats.totalHorizontalMovements += 10
+			log.Printf("{x: %d, y: %d, totalHorizontalMovements: %d}", stats.x, stats.y, stats.totalHorizontalMovements)
 
 			// If the next column is already at the edge (east), change the direction to west
 			if stats.x == esOpts.length {

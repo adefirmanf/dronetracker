@@ -11,3 +11,10 @@ type Tree struct {
 	CreatedAt   time.Time
 	UpdatedAt   time.Time
 }
+
+type TreeStats struct {
+	Count  int
+	Max    int
+	Min    int
+	Median float32
+}
