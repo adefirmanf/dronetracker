@@ -1,15 +1,29 @@
 package handler
 
-import "github.com/SawitProRecruitment/UserService/repository"
+import (
+	"github.com/SawitProRecruitment/UserService/service/estate"
+	"github.com/SawitProRecruitment/UserService/service/tree"
+)
 
 type Server struct {
-	Repository repository.RepositoryInterface
+	Validator *Validator
+
+	EstateService estate.Service
+	TreeService   tree.Service
 }
 
 type NewServerOptions struct {
-	Repository repository.RepositoryInterface
+	Validator *Validator
+
+	EstateService estate.Service
+	TreeService   tree.Service
 }
 
 func NewServer(opts NewServerOptions) *Server {
-	return &Server{}
+	return &Server{
+		Validator: opts.Validator,
+
+		EstateService: opts.EstateService,
+		TreeService:   opts.TreeService,
+	}
 }
