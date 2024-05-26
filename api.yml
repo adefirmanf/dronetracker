@@ -61,10 +61,7 @@ paths:
           content:
             application/json:
               schema:
-                oneOf:
-                - $ref: '#/components/schemas/MissingField'
-                - $ref: '#/components/schemas/WrongDatatype'
-                - $ref: '#/components/schemas/WrongMinValue'
+                $ref: '#/components/schemas/BadRequest'
                 
   /estate/{estate_id}/tree:
     post:
@@ -99,11 +96,8 @@ paths:
           description: Missing required properties / bad request
           content:
             application/json:
-              schema:
-                oneOf:
-                - $ref: '#/components/schemas/MissingField'
-                - $ref: '#/components/schemas/WrongDatatype'
-                - $ref: '#/components/schemas/WrongMinValue'
+              schema: 
+                $ref: '#/components/schemas/BadRequest'
                 
   /estate/{estate_id}/stats:
     get:
@@ -171,15 +165,21 @@ components:
           example: 10
           minimum: 1
           maximum: 1000000
-        height:
+          x-oapi-codegen-extra-tags:
+            validate: gte=1,lte=1000000
+            
+        length:
           type: integer
           format: int
           example: 10
           minimum: 1
           maximum: 1000000
+          x-oapi-codegen-extra-tags:
+            validate: gte=1,lte=1000000
       required: 
         - width
-        - height
+        - length
+
           
     CreateValidResponse:
       type: object
@@ -187,6 +187,8 @@ components:
         id: 
           type: string
           example: "275ce7d2-f3ba-4aec-8511-f4a0ea00869d"
+      required: 
+        - id
           
     GetStatEstateResponse:
       type: object
@@ -233,6 +235,15 @@ components:
               example: 10
       required: 
         - distance
+    
+    BadRequest:
+      type: object
+      properties: 
+        error: 
+          type: string
+          example: "Length must be greter than or equal to 1 "
+      required:
+        - error
           
     MissingField:
       type: object
@@ -261,18 +272,24 @@ components:
           example: 10
           minimum: 1
           maximum: 1000000
+          x-oapi-codegen-extra-tags:
+            validate: gte=1,lte=1000000
         y:
           type: integer
           format: int
           example: 10
           minimum: 1
           maximum: 1000000
+          x-oapi-codegen-extra-tags:
+            validate: gte=1,lte=1000000
         height:
           type: integer
           format: int
           example: 30
           minimum: 1
           maximum: 1000000
+          x-oapi-codegen-extra-tags:
+            validate: gte=1,lte=1000000
       required: 
         - x
         - y
@@ -283,7 +300,10 @@ components:
       properties:
         error:
           type: string
-          example: estate is not found
+          example: estate id is not found
+      required:
+        - error
+
     HelloResponse:
       type: object
       required:
