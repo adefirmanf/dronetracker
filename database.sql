@@ -21,6 +21,7 @@ CREATE TABLE tree (
 	estate_id uuid NOT NULL,
 	x_coordinate int NULL NULL DEFAULT 0,
 	y_coordinate int NOT NULL DEFAULT 0,
+	height int4 NOT NULL DEFAULT 0,
 	created_at timestamptz NOT NULL DEFAULT now(),
 	updated_at timestamptz NOT NULL DEFAULT now(),
 	-- Add constraint for ID
