@@ -6,6 +6,11 @@ import (
 	"github.com/SawitProRecruitment/UserService/generated"
 	"github.com/SawitProRecruitment/UserService/handler"
 	"github.com/SawitProRecruitment/UserService/repository"
+	"github.com/SawitProRecruitment/UserService/service/estate"
+	"github.com/SawitProRecruitment/UserService/service/tree"
+
+	repoEstate "github.com/SawitProRecruitment/UserService/repository/estate"
+	repoTree "github.com/SawitProRecruitment/UserService/repository/tree"
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
@@ -23,11 +28,20 @@ func main() {
 
 func newServer() *handler.Server {
 	dbDsn := os.Getenv("DATABASE_URL")
-	var repo repository.RepositoryInterface = repository.NewRepository(repository.NewRepositoryOptions{
+
+	db := repository.NewRepository(repository.NewRepositoryOptions{
 		Dsn: dbDsn,
 	})
+
+	// Initiate Estate Repository
+	estateRepo := repoEstate.NewRepository(db)
+	treeRepo := repoTree.NewRepository(db)
+
 	opts := handler.NewServerOptions{
-		Repository: repo,
+		Validator:     handler.NewValidator(),
+		EstateService: estate.NewEstateService(estateRepo),
+		TreeService:   tree.NewTreeService(treeRepo, estateRepo),
 	}
+
 	return handler.NewServer(opts)
 }
