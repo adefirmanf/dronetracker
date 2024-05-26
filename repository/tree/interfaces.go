@@ -1,12 +1,10 @@
 package tree
 
-import (
-	"context"
+import "context"
 
-	"github.com/google/uuid"
-)
+type RepositoryInterface interface {
+	Insert(ctx context.Context, tree *Tree) (string, error)
+	FindByEstateID(ctx context.Context, estateId string) ([]*Tree, error)
 
-type TreeRepositoryInterface interface {
-	CreateTree(ctx context.Context, tree *Tree) error
-	GetTree(ctx context.Context, id uuid.UUID) (*Tree, error)
+	IsExistInEstate(ctx context.Context, estateId string, xCoordinate, yCoordinate int) (bool, error)
 }

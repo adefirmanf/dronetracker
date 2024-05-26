@@ -1,10 +1,13 @@
 package tree
 
+import "time"
+
 type Tree struct {
-	Id     string
-	Height int
-	Left   *Tree
-	Right  *Tree
-	Root   *Tree
-	IsLeaf bool
+	ID          string
+	EstateID    string
+	XCoordinate int
+	YCoordinate int
+	Height      int
+	CreatedAt   time.Time
+	UpdatedAt   time.Time
 }
