@@ -2,7 +2,6 @@ package tree
 
 import (
 	"context"
-	"log"
 
 	"github.com/SawitProRecruitment/UserService/repository/estate"
 	"github.com/SawitProRecruitment/UserService/repository/tree"
@@ -18,9 +17,6 @@ type Service interface {
 	CreateNewTree(ctx context.Context, estateId string, xCoordinate, yCoordinate, height int) (string, error)
 	RetrievesByEstateID(ctx context.Context, id string) ([]*tree.Tree, error)
 	GetStats(ctx context.Context, id string) (*tree.TreeStats, error)
-
-	IsTreePlanted(ctx context.Context, estateID string, xCoordinate, yCoordinate int) bool
-	IsOutOfBound(ctx context.Context, estate *estate.Estate, xCoordinate, yCoordinate int) bool
 }
 
 func NewTreeService(tree tree.RepositoryInterface, estate estate.RepositoryInterface) Service {
@@ -36,15 +32,14 @@ func (s *service) CreateNewTree(ctx context.Context, estateId string, xCoordinat
 	// Check if estate id is exist
 	estate, err := s.estateRepository.FindByID(ctx, estateId)
 	if err != nil || estate == nil {
-		log.Println(err)
 		return "", types.ErrorEstateNotFound
 	}
 	// Check if tree is out of bound
-	if s.IsOutOfBound(ctx, estate, xCoordinate, yCoordinate) {
+	if s.isOutOfBound(ctx, estate, xCoordinate, yCoordinate) {
 		return "", types.ErorrTreeOutOfBound
 	}
 	// Check if tree already planted in same coordinate
-	if s.IsTreePlanted(ctx, estateId, xCoordinate, yCoordinate) {
+	if s.isTreePlanted(ctx, estateId, xCoordinate, yCoordinate) {
 		return "", types.ErrorTreeAlreadyPlanted
 	}
 
@@ -57,12 +52,12 @@ func (s *service) CreateNewTree(ctx context.Context, estateId string, xCoordinat
 }
 
 // IsOutOfBound check if tree is out of bound
-func (s *service) IsOutOfBound(ctx context.Context, estate *estate.Estate, xCoordinate, yCoordinate int) bool {
+func (s *service) isOutOfBound(ctx context.Context, estate *estate.Estate, xCoordinate, yCoordinate int) bool {
 	return xCoordinate < 0 || xCoordinate > estate.Length || yCoordinate < 0 || yCoordinate > estate.Width
 }
 
 // IsTreePlanted check if tree is already planted
-func (s *service) IsTreePlanted(ctx context.Context, estateId string, xCoordinate, yCoordinate int) bool {
+func (s *service) isTreePlanted(ctx context.Context, estateId string, xCoordinate, yCoordinate int) bool {
 	if exist, err := s.treeRepository.IsExistInEstate(ctx, estateId, xCoordinate, yCoordinate); err != nil {
 		return false
 	} else {

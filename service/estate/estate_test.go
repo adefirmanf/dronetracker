@@ -100,6 +100,6 @@ func TestCreateEstate(t *testing.T) {
 		if err != nil {
 			assert.Equal(t, tt.wantErr, err)
 		}
-		assert.Equal(t, estate, tt.want)
+		assert.Equal(t, tt.want, estate)
 	}
 }
