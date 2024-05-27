@@ -13,12 +13,6 @@ type service struct {
 	treeRepository   tree.RepositoryInterface
 }
 
-type Service interface {
-	CreateNewTree(ctx context.Context, estateId string, xCoordinate, yCoordinate, height int) (string, error)
-	RetrievesByEstateID(ctx context.Context, id string) ([]*tree.Tree, error)
-	GetStats(ctx context.Context, id string) (*tree.TreeStats, error)
-}
-
 func NewTreeService(tree tree.RepositoryInterface, estate estate.RepositoryInterface) Service {
 	return &service{
 		treeRepository:   tree,

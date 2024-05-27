@@ -10,11 +10,6 @@ type service struct {
 	estateRepository estate.RepositoryInterface
 }
 
-type Service interface {
-	RetrieveEstate(ctx context.Context, id string) (*estate.Estate, error)
-	CreateNewEstate(ctx context.Context, width, length int) (string, error)
-}
-
 func NewEstateService(r estate.RepositoryInterface) Service {
 	return &service{
 		estateRepository: r,

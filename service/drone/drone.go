@@ -12,10 +12,6 @@ func NewDroneService(opts DroneOpts) Service {
 	return &DroneOpts{}
 }
 
-type Service interface {
-	GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int
-}
-
 // GetDronePlane get drone total travel distance
 func (d *DroneOpts) GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int {
 	initTree := d.initTreeInPlotsAsMap(tree)
