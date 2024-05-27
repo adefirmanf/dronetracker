@@ -13,24 +13,24 @@ import (
 
 func TestRetrieveEstate(t *testing.T) {
 	tests := []struct {
-		name      string
-		id        string
-		returns   *estate.Estate
-		returnErr error
-		want      *estate.Estate
-		wantErr   error
+		name    string
+		id      string
+		mock    func(mock *estate.MockRepositoryInterfaceMockRecorder)
+		want    *estate.Estate
+		wantErr error
 	}{
 		{
 			name: "should return estate",
 			id:   "1",
-			returns: &estate.Estate{
-				ID:        "1",
-				Width:     10,
-				Length:    10,
-				CreatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
-				UpdatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+			mock: func(stub *estate.MockRepositoryInterfaceMockRecorder) {
+				stub.FindByID(context.Background(), "1").Return(&estate.Estate{
+					ID:        "1",
+					Width:     10,
+					Length:    10,
+					CreatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+					UpdatedAt: time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
+				}, nil)
 			},
-			returnErr: nil,
 			want: &estate.Estate{
 				ID:        "1",
 				Width:     10,
@@ -41,26 +41,27 @@ func TestRetrieveEstate(t *testing.T) {
 			wantErr: nil,
 		},
 		{
-			name:      "should return error",
-			id:        "1",
-			returns:   nil,
-			returnErr: errors.New("db: no rows in result set"),
-			want:      nil,
-			wantErr:   errors.New("db: no rows in result set"),
+			name: "should return error",
+			id:   "1",
+			mock: func(stub *estate.MockRepositoryInterfaceMockRecorder) {
+				stub.FindByID(context.Background(), "1").Return(nil, errors.New("db: no rows in result set"))
+			},
+			want:    nil,
+			wantErr: errors.New("db: no rows in result set"),
 		},
 	}
 
-	for _, v := range tests {
+	for _, tt := range tests {
 		mockRepo := estate.NewMockRepositoryInterface(gomock.NewController(t))
-		mockRepo.EXPECT().FindByID(context.Background(), v.id).Return(v.returns, nil)
+		tt.mock(mockRepo.EXPECT())
 
 		estateService := NewEstateService(mockRepo)
 
-		estate, err := estateService.RetrieveEstate(context.Background(), v.id)
+		estate, err := estateService.RetrieveEstate(context.Background(), tt.id)
 		if err != nil {
-			assert.Equal(t, v.wantErr, err)
+			assert.Equal(t, tt.wantErr, err)
 		}
-		assert.Equal(t, estate, v.returns)
+		assert.Equal(t, estate, tt.want)
 	}
 }
 
@@ -71,10 +72,9 @@ func TestCreateEstate(t *testing.T) {
 			width  int
 			length int
 		}
-		returns   string
-		returnErr error
-		want      string
-		wantErr   error
+		mock    func(m *estate.MockRepositoryInterfaceMockRecorder)
+		want    string
+		wantErr error
 	}{
 		{
 			name: "should create new estate",
@@ -82,23 +82,24 @@ func TestCreateEstate(t *testing.T) {
 				width  int
 				length int
 			}{10, 20},
-			returns:   "1",
-			returnErr: nil,
-			want:      "1",
-			wantErr:   nil,
+			mock: func(stub *estate.MockRepositoryInterfaceMockRecorder) {
+				stub.Insert(context.Background(), &estate.Estate{Width: 10, Length: 20}).Return("1", nil)
+			},
+			want:    "1",
+			wantErr: nil,
 		},
 	}
 
-	for _, v := range tests {
+	for _, tt := range tests {
 		mockRepo := estate.NewMockRepositoryInterface(gomock.NewController(t))
-		mockRepo.EXPECT().Insert(context.Background(), &estate.Estate{Width: v.args.width, Length: v.args.length}).Return(v.returns, nil)
+		tt.mock(mockRepo.EXPECT())
 
 		estateService := NewEstateService(mockRepo)
 
-		estate, err := estateService.CreateNewEstate(context.Background(), v.args.width, v.args.length)
+		estate, err := estateService.CreateNewEstate(context.Background(), tt.args.width, tt.args.length)
 		if err != nil {
-			assert.Equal(t, v.wantErr, err)
+			assert.Equal(t, tt.wantErr, err)
 		}
-		assert.Equal(t, estate, v.returns)
+		assert.Equal(t, estate, tt.want)
 	}
 }
