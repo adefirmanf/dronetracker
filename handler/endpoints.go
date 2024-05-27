@@ -2,8 +2,6 @@ package handler
 
 import (
 	"errors"
-	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/SawitProRecruitment/UserService/generated"
@@ -11,20 +9,15 @@ import (
 	"github.com/labstack/echo/v4"
 )
 
-// This is just a test endpoint to get you started. Please delete this endpoint.
-// (GET /hello)
-func (s *Server) GetHello(ctx echo.Context, params generated.GetHelloParams) error {
-	var resp generated.HelloResponse
-	resp.Message = fmt.Sprintf("Hello User %d", params.Id)
-	return ctx.JSON(http.StatusOK, resp)
-}
+const errorBindRequest = "failed to bind request"
+const errorServerResponse = "internal server error"
 
 func (s *Server) PostEstate(ctx echo.Context) error {
 	var req generated.CreateEstateRequestPayload
 
 	if err := ctx.Bind(&req); err != nil {
 		var badRequestResp generated.BadRequest
-		badRequestResp.Error = err.Error()
+		badRequestResp.Error = errorBindRequest
 
 		return ctx.JSON(http.StatusBadRequest, badRequestResp)
 	}
@@ -38,7 +31,10 @@ func (s *Server) PostEstate(ctx echo.Context) error {
 
 	id, err := s.EstateService.CreateNewEstate(ctx.Request().Context(), req.Width, req.Length)
 	if err != nil {
-		return err
+		var internalServerErrorResp generated.InternalServerError
+		internalServerErrorResp.Error = errorServerResponse
+
+		return ctx.JSON(http.StatusInternalServerError, internalServerErrorResp)
 	}
 
 	var resp generated.CreateValidResponse
@@ -62,7 +58,7 @@ func (s *Server) PostEstateEstateIdTree(ctx echo.Context, estateId string) error
 
 	if err := ctx.Bind(&req); err != nil {
 		var badRequestResp generated.BadRequest
-		badRequestResp.Error = err.Error()
+		badRequestResp.Error = errorBindRequest
 
 		return ctx.JSON(http.StatusBadRequest, badRequestResp)
 	}
@@ -76,7 +72,6 @@ func (s *Server) PostEstateEstateIdTree(ctx echo.Context, estateId string) error
 
 	var resp generated.CreateValidResponse
 	if id, err := s.TreeService.CreateNewTree(ctx.Request().Context(), estateId, req.X, req.Y, req.Height); err != nil {
-		log.Println(err)
 		// Handling error
 		switch {
 		// Handling error if estate not found
@@ -97,7 +92,10 @@ func (s *Server) PostEstateEstateIdTree(ctx echo.Context, estateId string) error
 			return ctx.JSON(http.StatusBadRequest, badRequestResp)
 
 		default:
-			return ctx.JSON(http.StatusInternalServerError, "internal server error")
+			var internalServerErrorResp generated.InternalServerError
+			internalServerErrorResp.Error = errorServerResponse
+
+			return ctx.JSON(http.StatusInternalServerError, internalServerErrorResp)
 		}
 	} else {
 		resp.Id = id
@@ -118,17 +116,20 @@ func (s *Server) GetEstateEstateIdDronePlan(ctx echo.Context, estateID string, p
 		return ctx.JSON(http.StatusBadRequest, badRequestResp)
 	}
 
-	// TODO: Return as Internal server error
 	estate, err := s.EstateService.RetrieveEstate(ctx.Request().Context(), estateID)
 	if err != nil {
-		log.Println("Error here estate", err)
-		return err
+		var internalServerErrorResp generated.InternalServerError
+		internalServerErrorResp.Error = errorServerResponse
+
+		return ctx.JSON(http.StatusInternalServerError, internalServerErrorResp)
 	}
 
 	trees, err := s.TreeService.RetrievesByEstateID(ctx.Request().Context(), estateID)
 	if err != nil {
-		log.Println("Error here tree", err)
-		return err
+		var internalServerErrorResp generated.InternalServerError
+		internalServerErrorResp.Error = errorServerResponse
+
+		return ctx.JSON(http.StatusInternalServerError, internalServerErrorResp)
 	}
 	var resp generated.GetDronePlanResponse
 	stats := s.DroneService.GetDronePlane(estate, trees)
@@ -151,6 +152,7 @@ func (s *Server) GetEstateEstateIdStats(ctx echo.Context, estateId string) error
 
 	var resp generated.GetStatEstateResponse
 	if stats, err := s.TreeService.GetStats(ctx.Request().Context(), estateId); err != nil {
+		// Return default value if error
 		return ctx.JSON(http.StatusOK, resp)
 	} else {
 		resp.Count = stats.Count
