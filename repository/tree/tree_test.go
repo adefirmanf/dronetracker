@@ -3,7 +3,6 @@ package tree
 import (
 	"context"
 	"errors"
-	reflect "reflect"
 	"regexp"
 	"testing"
 	"time"
@@ -11,6 +10,7 @@ import (
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	"github.com/SawitProRecruitment/UserService/repository"
 	uuid "github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInsertTree(t *testing.T) {
@@ -21,7 +21,7 @@ func TestInsertTree(t *testing.T) {
 		args       Tree
 		beforeTest func(sqlmock.Sqlmock)
 		want       string
-		wantErr    bool
+		wantErr    error
 	}{
 		{
 			name: "success insert tree",
@@ -39,7 +39,7 @@ func TestInsertTree(t *testing.T) {
 					WillReturnRows(sqlmock.NewRows([]string{"id"}).AddRow(returnedUUID))
 			},
 			want:    returnedUUID,
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
 			name: "fail insert tree",
@@ -57,7 +57,7 @@ func TestInsertTree(t *testing.T) {
 					WillReturnError(errors.New("some error"))
 			},
 			want:    "",
-			wantErr: true,
+			wantErr: errors.New("some error"),
 		},
 	}
 
@@ -72,13 +72,9 @@ func TestInsertTree(t *testing.T) {
 			r := NewRepository(&repository.Repository{Db: db})
 			tt.beforeTest(mock)
 			got, err := r.Insert(context.Background(), &tt.args)
-			if got != tt.want {
-				t.Errorf("Insert() got = %v, want %v", got, tt.want)
-			}
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Insert() error = %v, wantErr %v", err, tt.wantErr)
-				return
+			assert.Equal(t, got, tt.want)
+			if err != nil {
+				assert.Equal(t, err, tt.wantErr)
 			}
 
 		})
@@ -92,7 +88,7 @@ func TestGetStats(t *testing.T) {
 		args       string
 		beforeTest func(sqlmock.Sqlmock)
 		want       *TreeStats
-		wantErr    bool
+		wantErr    error
 	}{
 		{
 			name: "success get stats",
@@ -111,7 +107,7 @@ func TestGetStats(t *testing.T) {
 				Min:    5,
 				Median: 5,
 			},
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
 			name: "fail get stats",
@@ -124,7 +120,7 @@ func TestGetStats(t *testing.T) {
 					WillReturnError(errors.New("some error"))
 			},
 			want:    nil,
-			wantErr: true,
+			wantErr: errors.New("some error"),
 		},
 	}
 
@@ -140,13 +136,9 @@ func TestGetStats(t *testing.T) {
 			tt.beforeTest(mock)
 			got, err := r.GetStats(context.Background(), tt.args)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetStats() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("GetStats() got = %v, want %v", got, tt.want)
+			assert.Equal(t, got, tt.want)
+			if err != nil {
+				assert.Equal(t, err, tt.wantErr)
 			}
 		})
 	}
@@ -159,7 +151,7 @@ func TestFindByEstateID(t *testing.T) {
 		args       string
 		beforeTest func(sqlmock.Sqlmock)
 		want       []*Tree
-		wantErr    bool
+		wantErr    error
 	}{
 		{
 			name: "success find by estate id",
@@ -193,7 +185,7 @@ func TestFindByEstateID(t *testing.T) {
 					UpdatedAt:   time.Date(2024, 1, 1, 0, 0, 0, 0, time.UTC),
 				},
 			},
-			wantErr: false,
+			wantErr: nil,
 		},
 		{
 			name: "fail find by estate id",
@@ -206,7 +198,7 @@ func TestFindByEstateID(t *testing.T) {
 					WillReturnError(errors.New("some error"))
 			},
 			want:    nil,
-			wantErr: true,
+			wantErr: errors.New("some error"),
 		},
 	}
 
@@ -222,13 +214,9 @@ func TestFindByEstateID(t *testing.T) {
 			tt.beforeTest(mock)
 			got, err := r.FindByEstateID(context.Background(), tt.args)
 
-			if (err != nil) != tt.wantErr {
-				t.Errorf("FindByEstateID() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-
-			if !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("FindByEstateID() got = %v, want %v", got, tt.want)
+			assert.Equal(t, got, tt.want)
+			if err != nil {
+				assert.Equal(t, err, tt.wantErr)
 			}
 		})
 	}
