@@ -13,58 +13,88 @@ import (
 	context "context"
 	reflect "reflect"
 
-	uuid "github.com/google/uuid"
 	gomock "go.uber.org/mock/gomock"
 )
 
-// MockTreeRepositoryInterface is a mock of TreeRepositoryInterface interface.
-type MockTreeRepositoryInterface struct {
+// MockRepositoryInterface is a mock of RepositoryInterface interface.
+type MockRepositoryInterface struct {
 	ctrl     *gomock.Controller
-	recorder *MockTreeRepositoryInterfaceMockRecorder
+	recorder *MockRepositoryInterfaceMockRecorder
 }
 
-// MockTreeRepositoryInterfaceMockRecorder is the mock recorder for MockTreeRepositoryInterface.
-type MockTreeRepositoryInterfaceMockRecorder struct {
-	mock *MockTreeRepositoryInterface
+// MockRepositoryInterfaceMockRecorder is the mock recorder for MockRepositoryInterface.
+type MockRepositoryInterfaceMockRecorder struct {
+	mock *MockRepositoryInterface
 }
 
-// NewMockTreeRepositoryInterface creates a new mock instance.
-func NewMockTreeRepositoryInterface(ctrl *gomock.Controller) *MockTreeRepositoryInterface {
-	mock := &MockTreeRepositoryInterface{ctrl: ctrl}
-	mock.recorder = &MockTreeRepositoryInterfaceMockRecorder{mock}
+// NewMockRepositoryInterface creates a new mock instance.
+func NewMockRepositoryInterface(ctrl *gomock.Controller) *MockRepositoryInterface {
+	mock := &MockRepositoryInterface{ctrl: ctrl}
+	mock.recorder = &MockRepositoryInterfaceMockRecorder{mock}
 	return mock
 }
 
 // EXPECT returns an object that allows the caller to indicate expected use.
-func (m *MockTreeRepositoryInterface) EXPECT() *MockTreeRepositoryInterfaceMockRecorder {
+func (m *MockRepositoryInterface) EXPECT() *MockRepositoryInterfaceMockRecorder {
 	return m.recorder
 }
 
-// CreateTree mocks base method.
-func (m *MockTreeRepositoryInterface) CreateTree(ctx context.Context, tree *Tree) error {
+// FindByEstateID mocks base method.
+func (m *MockRepositoryInterface) FindByEstateID(ctx context.Context, estateId string) ([]*Tree, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "CreateTree", ctx, tree)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CreateTree indicates an expected call of CreateTree.
-func (mr *MockTreeRepositoryInterfaceMockRecorder) CreateTree(ctx, tree any) *gomock.Call {
-	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateTree", reflect.TypeOf((*MockTreeRepositoryInterface)(nil).CreateTree), ctx, tree)
-}
-
-// GetTree mocks base method.
-func (m *MockTreeRepositoryInterface) GetTree(ctx context.Context, id uuid.UUID) (*Tree, error) {
-	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetTree", ctx, id)
-	ret0, _ := ret[0].(*Tree)
+	ret := m.ctrl.Call(m, "FindByEstateID", ctx, estateId)
+	ret0, _ := ret[0].([]*Tree)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// GetTree indicates an expected call of GetTree.
-func (mr *MockTreeRepositoryInterfaceMockRecorder) GetTree(ctx, id any) *gomock.Call {
+// FindByEstateID indicates an expected call of FindByEstateID.
+func (mr *MockRepositoryInterfaceMockRecorder) FindByEstateID(ctx, estateId any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetTree", reflect.TypeOf((*MockTreeRepositoryInterface)(nil).GetTree), ctx, id)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByEstateID", reflect.TypeOf((*MockRepositoryInterface)(nil).FindByEstateID), ctx, estateId)
+}
+
+// GetStats mocks base method.
+func (m *MockRepositoryInterface) GetStats(ctx context.Context, estateID string) (*TreeStats, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetStats", ctx, estateID)
+	ret0, _ := ret[0].(*TreeStats)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetStats indicates an expected call of GetStats.
+func (mr *MockRepositoryInterfaceMockRecorder) GetStats(ctx, estateID any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetStats", reflect.TypeOf((*MockRepositoryInterface)(nil).GetStats), ctx, estateID)
+}
+
+// Insert mocks base method.
+func (m *MockRepositoryInterface) Insert(ctx context.Context, tree *Tree) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Insert", ctx, tree)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Insert indicates an expected call of Insert.
+func (mr *MockRepositoryInterfaceMockRecorder) Insert(ctx, tree any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockRepositoryInterface)(nil).Insert), ctx, tree)
+}
+
+// IsExistInEstate mocks base method.
+func (m *MockRepositoryInterface) IsExistInEstate(ctx context.Context, estateId string, xCoordinate, yCoordinate int) (bool, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "IsExistInEstate", ctx, estateId, xCoordinate, yCoordinate)
+	ret0, _ := ret[0].(bool)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// IsExistInEstate indicates an expected call of IsExistInEstate.
+func (mr *MockRepositoryInterfaceMockRecorder) IsExistInEstate(ctx, estateId, xCoordinate, yCoordinate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "IsExistInEstate", reflect.TypeOf((*MockRepositoryInterface)(nil).IsExistInEstate), ctx, estateId, xCoordinate, yCoordinate)
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDrone(t *testing.T) {
+func TestGetDronePlan(t *testing.T) {
 	tests := []struct {
 		name    string
 		payload struct {

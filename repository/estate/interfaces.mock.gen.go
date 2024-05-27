@@ -8,3 +8,63 @@
 
 // Package estate is a generated GoMock package.
 package estate
+
+import (
+	context "context"
+	reflect "reflect"
+
+	gomock "go.uber.org/mock/gomock"
+)
+
+// MockRepositoryInterface is a mock of RepositoryInterface interface.
+type MockRepositoryInterface struct {
+	ctrl     *gomock.Controller
+	recorder *MockRepositoryInterfaceMockRecorder
+}
+
+// MockRepositoryInterfaceMockRecorder is the mock recorder for MockRepositoryInterface.
+type MockRepositoryInterfaceMockRecorder struct {
+	mock *MockRepositoryInterface
+}
+
+// NewMockRepositoryInterface creates a new mock instance.
+func NewMockRepositoryInterface(ctrl *gomock.Controller) *MockRepositoryInterface {
+	mock := &MockRepositoryInterface{ctrl: ctrl}
+	mock.recorder = &MockRepositoryInterfaceMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use.
+func (m *MockRepositoryInterface) EXPECT() *MockRepositoryInterfaceMockRecorder {
+	return m.recorder
+}
+
+// FindByID mocks base method.
+func (m *MockRepositoryInterface) FindByID(ctx context.Context, id string) (*Estate, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "FindByID", ctx, id)
+	ret0, _ := ret[0].(*Estate)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// FindByID indicates an expected call of FindByID.
+func (mr *MockRepositoryInterfaceMockRecorder) FindByID(ctx, id any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByID", reflect.TypeOf((*MockRepositoryInterface)(nil).FindByID), ctx, id)
+}
+
+// Insert mocks base method.
+func (m *MockRepositoryInterface) Insert(ctx context.Context, estate *Estate) (string, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "Insert", ctx, estate)
+	ret0, _ := ret[0].(string)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// Insert indicates an expected call of Insert.
+func (mr *MockRepositoryInterfaceMockRecorder) Insert(ctx, estate any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Insert", reflect.TypeOf((*MockRepositoryInterface)(nil).Insert), ctx, estate)
+}
