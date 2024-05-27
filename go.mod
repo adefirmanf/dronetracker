@@ -5,7 +5,6 @@ go 1.21
 require (
 	github.com/getkin/kin-openapi v0.117.0
 	github.com/go-playground/validator/v10 v10.20.0
-	github.com/golang/mock v1.6.0
 	github.com/google/uuid v1.5.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/lib/pq v1.10.9
@@ -24,7 +23,6 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/google/go-cmp v0.6.0
 	github.com/invopop/yaml v0.1.0 // indirect
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
