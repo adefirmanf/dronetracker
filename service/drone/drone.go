@@ -1,35 +1,28 @@
 package drone
 
 import (
-	"log"
-
 	"github.com/SawitProRecruitment/UserService/repository/estate"
 	"github.com/SawitProRecruitment/UserService/repository/tree"
 )
 
 type DroneOpts struct {
-	Logging             bool
-	HorizontalDirection string
 }
 
 func NewDroneService(opts DroneOpts) Service {
-	return &DroneOpts{
-		Logging:             opts.Logging,
-		HorizontalDirection: opts.HorizontalDirection,
-	}
+	return &DroneOpts{}
 }
 
 type Service interface {
 	GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int
 }
 
+// GetDronePlane get drone total travel distance
 func (d *DroneOpts) GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int {
 	initTree := d.initTreeInPlotsAsMap(tree)
 	drone := newDroneMovements(&estateOpts{width: estate.Width, length: estate.Length, treesLocation: initTree})
 	drone.startTrack()
 
 	stats := drone.getStats()
-	log.Println(stats)
 	return stats.totalHorizontalMovements + stats.totalVerticalMovements
 }
 

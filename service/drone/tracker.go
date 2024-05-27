@@ -1,7 +1,6 @@
 package drone
 
 import (
-	"log"
 	"math"
 )
 
@@ -143,7 +142,6 @@ func (d *droneMovements) startTrack() {
 			// Then need to move the drone to the next column (move: 1 step only)
 			stats.y++
 			stats.totalHorizontalMovements += 10
-			log.Printf("{x: %d, y: %d, totalHorizontalMovements: %d}", stats.x, stats.y, stats.totalHorizontalMovements)
 
 			// If the next column is already at the edge (east), change the direction to west
 			if stats.x == esOpts.length {
