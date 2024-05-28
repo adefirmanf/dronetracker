@@ -29,7 +29,6 @@ func main() {
 
 func newServer() *handler.Server {
 	dbDsn := os.Getenv("DATABASE_URL")
-	os.Setenv("DATABASE_URL", "postgres://postgres:postgres@localhost:5432/palm-estate?sslmode=disable")
 
 	db := repository.NewRepository(repository.NewRepositoryOptions{
 		Dsn: dbDsn,
