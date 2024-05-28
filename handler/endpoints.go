@@ -109,6 +109,11 @@ func (s *Server) GetEstateEstateIdDronePlan(ctx echo.Context, estateID string, p
 		EstateID string `validate:"uuid"`
 	}
 
+	var maxDistance int
+	if params.MaxDistance != nil {
+		maxDistance = *params.MaxDistance
+	}
+
 	if err := s.Validator.Validate(&Path{EstateID: estateID}); err != nil {
 		var badRequestResp generated.BadRequest
 		badRequestResp.Error = err.Error()
@@ -132,7 +137,15 @@ func (s *Server) GetEstateEstateIdDronePlan(ctx echo.Context, estateID string, p
 		return ctx.JSON(http.StatusInternalServerError, internalServerErrorResp)
 	}
 	var resp generated.GetDronePlanResponse
-	stats := s.DroneService.GetDronePlane(estate, trees)
+	stats, coor := s.DroneService.GetDronePlane(estate, trees, maxDistance)
+	if maxDistance > 0 {
+		resp = generated.GetDronePlanResponse{
+			Rest: &struct {
+				X *int "json:\"x,omitempty\""
+				Y *int "json:\"y,omitempty\""
+			}{X: &coor.X, Y: &coor.Y},
+		}
+	}
 
 	resp.Distance = stats
 	return ctx.JSON(http.StatusOK, resp)

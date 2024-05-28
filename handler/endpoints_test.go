@@ -262,7 +262,9 @@ func TestGetEstateEstateIDDronePlan(t *testing.T) {
 						XCoordinate: 2,
 						YCoordinate: 1,
 					},
-				}).Return(120)
+				}, 0).Return(120, drone.Coordinate{
+					X: 1,
+					Y: 1})
 			},
 			requestParam:   successUUID,
 			wantResponse:   `{"distance":120}`,
