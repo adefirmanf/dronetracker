@@ -6,5 +6,5 @@ import (
 )
 
 type Service interface {
-	GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int
+	GetDronePlane(estate *estate.Estate, tree []*tree.Tree, maxDistance int) (int, Coordinate)
 }

@@ -13,13 +13,16 @@ func NewDroneService(opts DroneOpts) Service {
 }
 
 // GetDronePlane get drone total travel distance
-func (d *DroneOpts) GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int {
+func (d *DroneOpts) GetDronePlane(estate *estate.Estate, tree []*tree.Tree, maxDistance int) (int, Coordinate) {
 	initTree := d.initTreeInPlotsAsMap(tree)
-	drone := newDroneMovements(&estateOpts{width: estate.Width, length: estate.Length, treesLocation: initTree})
+	drone := newDroneMovements(&estateOpts{width: estate.Width, length: estate.Length, treesLocation: initTree}, maxDistance)
 	drone.startTrack()
 
 	stats := drone.getStats()
-	return stats.totalHorizontalMovements + stats.totalVerticalMovements
+	if maxDistance > 0 {
+		return maxDistance, Coordinate{X: stats.x, Y: stats.y}
+	}
+	return (stats.totalHorizontalMovements + stats.totalVerticalMovements), Coordinate{X: stats.x, Y: stats.y}
 }
 
 // initTreeInPlotsAsMap convert trees array to map

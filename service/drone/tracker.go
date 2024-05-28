@@ -26,14 +26,17 @@ type droneMovements struct {
 	x                int
 	y                int
 	heightDrone      int
+	maxDistance      int
 
 	totalVerticalMovements   int
 	totalHorizontalMovements int
 }
 
-func newDroneMovements(estate *estateOpts) *droneMovements {
+func newDroneMovements(estate *estateOpts, maxDistance int) *droneMovements {
 	return &droneMovements{
-		estateOpts:     *estate,
+		estateOpts:  *estate,
+		maxDistance: maxDistance,
+
 		gapHeightLevel: 1,
 		groundLevel:    0,
 
@@ -41,6 +44,7 @@ func newDroneMovements(estate *estateOpts) *droneMovements {
 		x:                1,
 		y:                1,
 		heightDrone:      0,
+		// If maxdistance 0 , then there's no limit drone will travel
 
 		totalVerticalMovements:   0,
 		totalHorizontalMovements: 0,
@@ -95,6 +99,9 @@ func (d *droneMovements) startTrack() {
 	esOpts := d.estateOpts
 	stats := d
 	for i := 1; i < esOpts.length*esOpts.width; i++ {
+		if stats.maxDistance > 0 && stats.totalVerticalMovements+stats.totalHorizontalMovements > stats.maxDistance {
+			break
+		}
 		// Start from east to west (Drone position |> )
 		if stats.currentDirection == "east" {
 

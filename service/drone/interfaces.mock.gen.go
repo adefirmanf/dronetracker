@@ -41,15 +41,16 @@ func (m *MockService) EXPECT() *MockServiceMockRecorder {
 }
 
 // GetDronePlane mocks base method.
-func (m *MockService) GetDronePlane(estate *estate.Estate, tree []*tree.Tree) int {
+func (m *MockService) GetDronePlane(estate *estate.Estate, tree []*tree.Tree, maxDistance int) (int, Coordinate) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetDronePlane", estate, tree)
+	ret := m.ctrl.Call(m, "GetDronePlane", estate, tree, maxDistance)
 	ret0, _ := ret[0].(int)
-	return ret0
+	ret1, _ := ret[1].(Coordinate)
+	return ret0, ret1
 }
 
 // GetDronePlane indicates an expected call of GetDronePlane.
-func (mr *MockServiceMockRecorder) GetDronePlane(estate, tree any) *gomock.Call {
+func (mr *MockServiceMockRecorder) GetDronePlane(estate, tree, maxDistance any) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDronePlane", reflect.TypeOf((*MockService)(nil).GetDronePlane), estate, tree)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDronePlane", reflect.TypeOf((*MockService)(nil).GetDronePlane), estate, tree, maxDistance)
 }
